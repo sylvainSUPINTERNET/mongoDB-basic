@@ -7,57 +7,49 @@ let http = require('http').Server(app);
 
 let bodyParser = require('body-parser');
 
-let mongoose = require('mongoose');
-let MongoClient = require("mongodb").MongoClient;
 
+let mongoClient = require('mongodb').MongoClient;
 
-//Set up default mongoose connection
-let mongoDB = 'mongodb://127.0.0.1/my_database';
-mongoose.connect(mongoDB);
-
-//Get the default connection
-let db = mongoose.connection;
-
-//Bind connection to error event (to get notification of connection errors)
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: false}));
-
-// parse application/json
-app.use(bodyParser.json());
-
-
-//DB connection - Si la base n'existe pas, elle sera automatiquement créer au moment d'une insertion dans celle-ci (Mongoose)
-/*
- let db = mongoose.connect('mongodb://localhost/users', function(err) {
- if (err) { throw err; }
- });
-
- //ORDER : Schema (pattern) => Model (object copy pattern) => Variable perso
-
- //Define Schema for us APP
- let userSchema = mongoose.Schema({
- name: String
- });
-
- //Model
- let User = mongoose.model('User', userSchema);
-
-
- //Variables perso
- let user1 = new User({name: 'JEAN'});
- console.log(user1.name);
- db.users.insert(user1);
-
-
- */
+let url = 'mongodb://localhost/users';
 
 
 app.get('/', function (req, res, next) {
     console.log("home page");
 
+// Connexion au serveur avec la méthode connect
+    mongoClient.connect(url, function (err, db) {
+        if (err) {
+            return console.error('Connection failed', err);
+        }
+        console.log('Connection successful on ', url);
+
+
+        let collection = db.collection('users'); //creer la colleciton dans la table //show collections or show tables
+
+        //Pour afficher toute la collection db.users.find() dans le powershell
+
+        // Nous allons travailler ici ...
+
+        // Création de deux objets users
+        let user1 = {firstName: 'Foo', lastName: 'Fighters'};
+        let user2 = {firstName: 'Bob', lastName: 'Dylan'};
+
+// Enregistrement de plusieurs objets en db avec insertMany
+        collection.insertMany([user1, user2], function (err, result) {
+            if (err) {
+                console.error('Insert failed', err);
+            } else {
+                console.log('Insert successful', result);
+            }
+
+            db.close()
+        });
+
+        // Fermeture de la connexion
+
+
+        db.close()
+    });
 
     res.send("my home page");
 });
