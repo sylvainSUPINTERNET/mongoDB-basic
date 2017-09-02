@@ -10,7 +10,7 @@ let bodyParser = require('body-parser');
 
 let mongoClient = require('mongodb').MongoClient;
 
-let url = 'mongodb://localhost/users';
+let url = 'mongodb://localhost/users'; //BD
 
 
 app.get('/', function (req, res, next) {
@@ -24,7 +24,7 @@ app.get('/', function (req, res, next) {
         console.log('Connection successful on ', url);
 
 
-        let collection = db.collection('users'); //creer la colleciton dans la table //show collections or show tables
+        let collection = db.collection('users'); //creer la colleciton (une table) dans la bdd //show collections or show tables
 
         //Pour afficher toute la collection db.users.find() dans le powershell
 
